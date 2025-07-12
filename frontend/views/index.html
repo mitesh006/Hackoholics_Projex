@@ -1,1 +1,194 @@
-<!-- Landing Page HTML -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ReWear - Simple Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #fff3e0);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    h1 {
+      color: #2e7d32;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #2e7d32;
+    }
+
+    .link {
+      color: #388e3c;
+      font-size: 14px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .details {
+      text-align: left;
+      margin-top: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      background-color: #f1f8e9;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>ReWear</h1>
+
+    <!-- Signup Form -->
+    <div id="signupForm">
+      <input type="text" id="signupUsername" placeholder="Create username">
+      <input type="password" id="signupPassword" placeholder="Create password">
+      <input type="email" id="signupEmail" placeholder="Email">
+      <input type="tel" id="signupPhone" placeholder="Phone number">
+      <button class="btn" onclick="signUp()">Sign Up</button>
+      <p class="link" onclick="showLogin()">Already have an account? Login</p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="hidden">
+      <input type="text" id="loginUsername" placeholder="Enter username">
+      <input type="password" id="loginPassword" placeholder="Enter password">
+      <button class="btn" onclick="logIn()">Login</button>
+      <p class="link" onclick="showSignUp()">Don't have an account? Sign Up</p>
+    </div>
+
+    <!-- Welcome Box -->
+    <div id="welcomeBox" class="hidden">
+      <h2>Welcome, <span id="userDisplay"></span>! 🎉</h2>
+      <div class="details">
+        <strong>Email:</strong> <span id="emailDisplay"></span><br>
+        <strong>Phone:</strong> <span id="phoneDisplay"></span>
+      </div>
+      <button class="btn" onclick="logOut()">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    function showLogin() {
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+    }
+
+    function showSignUp() {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('signupForm').classList.remove('hidden');
+    }
+
+    function signUp() {
+      const user = document.getElementById('signupUsername').value;
+      const pass = document.getElementById('signupPassword').value;
+      const email = document.getElementById('signupEmail').value;
+      const phone = document.getElementById('signupPhone').value;
+
+      if (user === "" || pass === "" || email === "" || phone === "") {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      // Password validation: min 8 chars, contains number
+      if (pass.length < 8 || !/\d/.test(pass)) {
+        alert("Password must be at least 8 characters and contain a number.");
+        return;
+      }
+
+      // Phone validation: at least 10 digits and only numbers
+      if (phone.length < 10 || !/^\d+$/.test(phone)) {
+        alert("Phone number must be at least 10 digits and digits only.");
+        return;
+      }
+
+      // Store in localStorage
+      localStorage.setItem("user_" + user + "_password", pass);
+      localStorage.setItem("user_" + user + "_email", email);
+      localStorage.setItem("user_" + user + "_phone", phone);
+
+      alert("Sign up successful! Please log in.");
+      showLogin();
+    }
+
+    function logIn() {
+      const user = document.getElementById('loginUsername').value;
+      const pass = document.getElementById('loginPassword').value;
+
+      const storedPass = localStorage.getItem("user_" + user + "_password");
+
+      if (storedPass === null) {
+        alert("User not found.");
+        return;
+      }
+
+      if (storedPass === pass) {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('welcomeBox').classList.remove('hidden');
+        document.getElementById('userDisplay').innerText = user;
+        document.getElementById('emailDisplay').innerText = localStorage.getItem("user_" + user + "_email");
+        document.getElementById('phoneDisplay').innerText = localStorage.getItem("user_" + user + "_phone");
+      } else {
+        alert("Incorrect password.");
+      }
+      window.location.href = "dasshboard.html";
+
+    }
+
+    function logOut() {
+      document.getElementById('welcomeBox').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('loginUsername').value = "";
+      document.getElementById('loginPassword').value = "";
+      
+
+    }
+  </script>
+
+</body>
+</html>

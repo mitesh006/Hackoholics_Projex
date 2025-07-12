@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ReWear</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #fffde7, #e8f5e9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      color: #2e7d32;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .subheading {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      display: block;
+      background-color: #388e3c;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      margin: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      text-decoration: none;
+      width: 80%;
+      max-width: 300px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #2e7d32;
+    }
+
+    .logout {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #999;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to ReWear</h1>
+  <div class="subheading">Choose an action to get started</div>
+
+  <a href="#" class="btn" onclick="alert('Start swapping flow coming soon!')">🔄 Start Swapping</a>
+  <a href="#" class="btn" onclick="alert('Browsing items coming soon!')">🛍️ Browse Items</a>
+  <a href="#" class="btn" onclick="alert('Listing items coming soon!')">📤 List Items</a>
+
+  <div class="logout" onclick="logout()">Logout</div>
+
+  <script>
+    function logout() {
+      window.location.href = "index2.html"; // your login/signup page
+    }
+  </script>
+
+</body>
+</html>

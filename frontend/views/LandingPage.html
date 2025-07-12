@@ -291,6 +291,8 @@
       <div class="nav-links">
         <a href="LandingPage.html">Home</a>
         <a href="browse.html">Browse</a>
+        <a href="availablepage.html">Available Items</a>
+        <a href="swap.html">Swapping</a>
         <a href="add_items.html">Add Items</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="index.html">Logout</a>
@@ -302,7 +304,7 @@
         <div class="user-profile" onclick="toggleUserMenu()">
           <div class="user-avatar" id="userAvatar">JD</div>
           <div class="user-details">
-            <div class="user-name" id="userName">John Doe</div>
+            <div class="user-name" id="userName">Jay Patel</div>
             <div class="user-stats" id="userStats">5 items • 3 swaps</div>
           </div>
         </div>
@@ -462,7 +464,7 @@
           break;
         case 'swap':
         case 'start-swap':
-          UI.showMessage('Swap feature coming soon! 🔄', 'info');
+          window.location.href = "swap.html";
           break;
         case 'profile':
           window.location.href = "dashboard.html";
@@ -494,7 +496,6 @@
       initUserProfile();
     };
   </script>
-  <script src="../public/api.js"></script>
   <script src="../public/database-loader.js"></script>
   <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
   <script src="../public/page-loader.js"></script>

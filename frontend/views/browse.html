@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Browse Items - ReWear</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #fff3e0);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .header {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #2e7d32;
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: #388e3c;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #2e7d32;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .points-badge {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .back-btn {
+      background-color: #388e3c;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .back-btn:hover {
+      background-color: #2e7d32;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+
+    .filters-section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filter-group label {
+      color: #2e7d32;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .filter-group select {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .view-cart-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      background-color: #388e3c;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #2e7d32;
+    }
+
+    .btn-secondary {
+      background-color: #66bb6a;
+      font-size: 14px;
+      padding: 8px 16px;
+      margin: 5px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #388e3c;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      background-color: #f5f5f5;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .product-title {
+      font-size: 18px;
+      color: #2e7d32;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .product-details {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .product-price {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .product-points {
+      color: #388e3c;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .cart-section {
+      display: none;
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    .cart-section h3 {
+      color: #2e7d32;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-summary {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    .cart-total {
+      font-weight: bold;
+      color: #2e7d32;
+      font-size: 18px;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .payment-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .empty-cart {
+      text-align: center;
+      color: #666;
+      font-size: 16px;
+      padding: 40px;
+    }
+
+    .footer {
+      background-color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 50px;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+
+    .footer p {
+      color: #666;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+
+      .product-actions {
+        flex-direction: column;
+      }
+
+      .payment-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="nav-container">
+      <a href="LandingPage.html" class="logo">ReWear</a>
+      <div class="nav-links">
+        <a href="LandingPage.html">Dashboard</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
+      </div>
+      <div class="user-info">
+        <div class="points-badge">
+          <span id="point-balance">500</span> Points
+        </div>
+        <span id="user-display">👤 Welcome, Guest</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Browse Items</h1>
+
+    <div class="filters-section">
+      <div class="filter-group">
+        <label>Category</label>
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+          <option value="tops">Tops</option>
+          <option value="bottoms">Bottoms</option>
+          <option value="dresses">Dresses</option>
+          <option value="shoes">Shoes</option>
+          <option value="accessories">Accessories</option>
+          <option value="outerwear">Outerwear</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Size</label>
+        <select id="sizeFilter">
+          <option value="">All Sizes</option>
+          <option value="XS">XS</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="XXL">XXL</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Condition</label>
+        <select id="conditionFilter">
+          <option value="">All Conditions</option>
+          <option value="new">New</option>
+          <option value="like-new">Like New</option>
+          <option value="good">Good</option>
+          <option value="fair">Fair</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="view-cart-section">
+      <button class="btn" onclick="toggleCart()">
+        🛒 View Cart (<span id="cart-count">0</span>)
+      </button>
+    </div>
+
+    <div id="cart-section" class="cart-section">
+      <h3>Your Cart</h3>
+      <div id="cart-items">
+        <div class="empty-cart">Your cart is empty</div>
+      </div>
+      <div class="cart-summary" id="cart-summary" style="display: none;">
+        <div class="cart-total" id="cart-total"></div>
+        <div class="cart-total" id="cart-points"></div>
+        <div class="payment-buttons">
+          <button class="btn" onclick="buyWithCash()">💰 Buy with Cash</button>
+          <button class="btn" onclick="buyWithPoints()">⭐ Redeem Points</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+      <!-- Products will be generated by JavaScript -->
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 ReWear - Sustainable Fashion Exchange</p>
+  </div>
+
+  <script>
+    const loggedUser = "Guest"; // This would normally come from login
+    document.getElementById("user-display").textContent = `👤 Welcome, ${loggedUser}`;
+
+    const cart = [];
+    let userPoints = 500;
+
+    const sampleProducts = [
+      { id: 1, name: "Black Mini Dress", price: 11980, points: 120, category: "dresses", size: "M", condition: "like-new", image: null },
+      { id: 2, name: "Red Cardigan", price: 13495, points: 135, category: "tops", size: "L", condition: "good", image: null },
+      { id: 3, name: "Brown Leather Jacket", price: 12995, points: 130, category: "outerwear", size: "M", condition: "good", image: null },
+      { id: 4, name: "Black Leather Pants", price: 9895, points: 100, category: "bottoms", size: "S", condition: "like-new", image: null },
+      { id: 5, name: "Jade Blue Jeans", price: 13495, points: 135, category: "bottoms", size: "M", condition: "new", image: null },
+      { id: 6, name: "White Linen Pants", price: 12814, points: 128, category: "bottoms", size: "L", condition: "good", image: null },
+      { id: 7, name: "Vintage Denim Jacket", price: 8500, points: 85, category: "outerwear", size: "M", condition: "fair", image: null },
+      { id: 8, name: "Summer Floral Dress", price: 9200, points: 92, category: "dresses", size: "S", condition: "like-new", image: null }
+    ];
+
+    function updatePointsDisplay() {
+      document.getElementById("point-balance").textContent = userPoints;
+    }
+
+    function updateCartCount() {
+      document.getElementById("cart-count").textContent = cart.length;
+    }
+
+    function renderProducts(products = sampleProducts) {
+      const grid = document.getElementById("products-grid");
+      grid.innerHTML = "";
+
+      products.forEach(product => {
+        const productCard = document.createElement("div");
+        productCard.className = "product-card";
+        productCard.innerHTML = `
+          <div class="product-image">
+            ${product.image ? `<img src="${product.image}" alt="${product.name}">` : "📷 No Image"}
+          </div>
+          <div class="product-title">${product.name}</div>
+          <div class="product-details">
+            Size: ${product.size} | Condition: ${product.condition}
+          </div>
+          <div class="product-price">₹${product.price.toLocaleString()}</div>
+          <div class="product-points">${product.points} Points</div>
+          <div class="product-actions">
+            <button class="btn btn-secondary" onclick="addToCart(${product.id})">Add to Cart</button>
+            <button class="btn btn-secondary" onclick="buyNow(${product.id})">Buy Now</button>
+          </div>
+        `;
+        grid.appendChild(productCard);
+      });
+    }
+
+    function addToCart(productId) {
+      const product = sampleProducts.find(p => p.id === productId);
+      if (product && !cart.find(item => item.id === productId)) {
+        cart.push(product);
+        updateCartCount();
+        alert(`"${product.name}" added to your cart! 🛒`);
+      } else if (cart.find(item => item.id === productId)) {
+        alert("Item already in cart!");
+      }
+    }
+
+    function buyNow(productId) {
+      const product = sampleProducts.find(p => p.id === productId);
+      if (product) {
+        alert(`Proceeding to buy "${product.name}" for ₹${product.price.toLocaleString()}`);
+      }
+    }
+
+    function toggleCart() {
+      const cartSection = document.getElementById("cart-section");
+      const isVisible = cartSection.style.display === "block";
+      cartSection.style.display = isVisible ? "none" : "block";
+      if (!isVisible) displayCart();
+    }
+
+    function displayCart() {
+      const cartItems = document.getElementById("cart-items");
+      const cartSummary = document.getElementById("cart-summary");
+      const cartTotal = document.getElementById("cart-total");
+      const cartPoints = document.getElementById("cart-points");
+      
+      cartItems.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+        cartSummary.style.display = "none";
+        return;
+      }
+
+      let totalPrice = 0;
+      let totalPoints = 0;
+
+      cart.forEach((item, index) => {
+        const cartItem = document.createElement("div");
+        cartItem.className = "cart-item";
+        cartItem.innerHTML = `
+          <div>
+            <strong>${item.name}</strong><br>
+            <small>Size: ${item.size} | Condition: ${item.condition}</small>
+          </div>
+          <div>
+            <div>₹${item.price.toLocaleString()}</div>
+            <div style="color: #388e3c; font-size: 14px;">${item.points} pts</div>
+          </div>
+        `;
+        cartItems.appendChild(cartItem);
+        totalPrice += item.price;
+        totalPoints += item.points;
+      });
+
+      cartTotal.textContent = `Total: ₹${totalPrice.toLocaleString()}`;
+      cartPoints.textContent = `Points Required: ${totalPoints} pts`;
+      cartSummary.style.display = "block";
+    }
+
+    function buyWithCash() {
+      if (cart.length === 0) return alert("Cart is empty!");
+      
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      alert(`Thank you! You paid ₹${total.toLocaleString()} in cash. 💰`);
+      cart.length = 0;
+      updateCartCount();
+      displayCart();
+    }
+
+    function buyWithPoints() {
+      if (cart.length === 0) return alert("Cart is empty!");
+      
+      const totalPts = cart.reduce((sum, item) => sum + item.points, 0);
+      if (userPoints >= totalPts) {
+        userPoints -= totalPts;
+        alert(`Success! You used ${totalPts} points. Remaining: ${userPoints} points ⭐`);
+        cart.length = 0;
+        updateCartCount();
+        updatePointsDisplay();
+        displayCart();
+      } else {
+        alert(`Not enough points! You need ${totalPts} points but only have ${userPoints} points.`);
+      }
+    }
+
+    function filterProducts() {
+      const categoryFilter = document.getElementById("categoryFilter").value;
+      const sizeFilter = document.getElementById("sizeFilter").value;
+      const conditionFilter = document.getElementById("conditionFilter").value;
+
+      const filteredProducts = sampleProducts.filter(product => {
+        return (!categoryFilter || product.category === categoryFilter) &&
+               (!sizeFilter || product.size === sizeFilter) &&
+               (!conditionFilter || product.condition === conditionFilter);
+      });
+
+      renderProducts(filteredProducts);
+    }
+
+    // Add event listeners for filters
+    document.getElementById("categoryFilter").addEventListener("change", filterProducts);
+    document.getElementById("sizeFilter").addEventListener("change", filterProducts);
+    document.getElementById("conditionFilter").addEventListener("change", filterProducts);
+
+    // Initialize
+    updatePointsDisplay();
+    updateCartCount();
+    renderProducts();
+  </script>
+
+</body>
+</html>

@@ -113,6 +113,10 @@
     </div>
   </div>
 
+  <p style="text-align:center;margin-top:20px;">
+    <a href="LandingPage.html" style="color:#388e3c;text-decoration:underline;">Back to Home</a>
+  </p>
+
   <script>
     function showLogin() {
       document.getElementById('signupForm').classList.add('hidden');
@@ -168,16 +172,10 @@
       }
 
       if (storedPass === pass) {
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('welcomeBox').classList.remove('hidden');
-        document.getElementById('userDisplay').innerText = user;
-        document.getElementById('emailDisplay').innerText = localStorage.getItem("user_" + user + "_email");
-        document.getElementById('phoneDisplay').innerText = localStorage.getItem("user_" + user + "_phone");
+        window.location.href = "dashboard.html"; // Redirect to user dashboard
       } else {
         alert("Incorrect password.");
       }
-      window.location.href = "dasshboard.html";
-
     }
 
     function logOut() {
@@ -185,8 +183,6 @@
       document.getElementById('loginForm').classList.remove('hidden');
       document.getElementById('loginUsername').value = "";
       document.getElementById('loginPassword').value = "";
-      
-
     }
   </script>
 

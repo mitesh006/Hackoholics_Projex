@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(to right, #e0f7fa, #fff3e0);
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #388e3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #2e7d32;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Frontend Integration Test</h1>
+    
+    <div class="test-section">
+        <h2>1. API Connection Test</h2>
+        <button class="btn" onclick="testAPIConnection()">Test API Connection</button>
+        <div id="api-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Authentication Test</h2>
+        <button class="btn" onclick="testAuth()">Test Authentication</button>
+        <div id="auth-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Item Management Test</h2>
+        <button class="btn" onclick="testItems()">Test Item Operations</button>
+        <div id="items-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Navigation Test</h2>
+        <button class="btn" onclick="window.location.href='views/index.html'">Go to Login</button>
+        <button class="btn" onclick="window.location.href='views/LandingPage.html'">Go to Landing Page</button>
+        <button class="btn" onclick="window.location.href='views/browse.html'">Go to Browse</button>
+        <button class="btn" onclick="window.location.href='views/add_items.html'">Go to Add Items</button>
+        <button class="btn" onclick="window.location.href='views/dashboard.html'">Go to Dashboard</button>
+    </div>
+
+    <script src="frontend/public/api.js"></script>
+    <script>
+        async function testAPIConnection() {
+            const status = document.getElementById('api-status');
+            status.innerHTML = '<div class="status info">Testing API connection...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000');
+                const data = await response.json();
+                
+                if (data.message) {
+                    status.innerHTML = `<div class="status success">✅ API Connected: ${data.message}</div>`;
+                } else {
+                    status.innerHTML = '<div class="status error">❌ API response unexpected</div>';
+                }
+            } catch (error) {
+                status.innerHTML = `<div class="status error">❌ API Connection Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testAuth() {
+            const status = document.getElementById('auth-status');
+            status.innerHTML = '<div class="status info">Testing authentication...</div>';
+            
+            try {
+                // Test if user is already authenticated
+                if (API.isAuthenticated()) {
+                    const user = API.getCurrentUser();
+                    status.innerHTML = `<div class="status success">✅ User Authenticated: ${user.username}</div>`;
+                } else {
+                    status.innerHTML = '<div class="status info">ℹ️ No user authenticated. Please login first.</div>';
+                }
+            } catch (error) {
+                status.innerHTML = `<div class="status error">❌ Auth Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testItems() {
+            const status = document.getElementById('items-status');
+            status.innerHTML = '<div class="status info">Testing item operations...</div>';
+            
+            try {
+                const response = await API.getAllItems();
+                const itemCount = response.items ? response.items.length : 0;
+                status.innerHTML = `<div class="status success">✅ Items Loaded: ${itemCount} items found</div>`;
+            } catch (error) {
+                status.innerHTML = `<div class="status error">❌ Items Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-run API connection test on page load
+        window.onload = function() {
+            testAPIConnection();
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test - ReWear</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔐 Login Test - ReWear</h1>
+        
+        <div class="test-section">
+            <h3>📋 Test Instructions</h3>
+            <ol>
+                <li><strong>Register</strong> a new account first</li>
+                <li><strong>Login</strong> with the registered credentials</li>
+                <li><strong>Check</strong> the status messages below</li>
+                <li><strong>Verify</strong> token storage in browser</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>👤 Registration Test</h3>
+            <div class="form-group">
+                <label for="regUsername">Username:</label>
+                <input type="text" id="regUsername" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password:</label>
+                <input type="password" id="regPassword" placeholder="Enter password (min 8 chars, include number)">
+            </div>
+            <button class="btn btn-success" onclick="testRegister()">Register</button>
+            <div id="register-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 Login Test</h3>
+            <div class="form-group">
+                <label for="loginEmail">Email:</label>
+                <input type="email" id="loginEmail" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="testLogin()">Login</button>
+            <div id="login-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Authentication Status</h3>
+            <button class="btn" onclick="checkAuthStatus()">Check Status</button>
+            <button class="btn btn-danger" onclick="clearAuth()">Clear Auth</button>
+            <div id="auth-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🌐 Backend Connection</h3>
+            <button class="btn" onclick="testBackend()">Test Backend</button>
+            <div id="backend-status"></div>
+        </div>
+    </div>
+
+    <script src="frontend/public/api.js"></script>
+    <script>
+        async function testRegister() {
+            const status = document.getElementById('register-status');
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (!username || !email || !password) {
+                status.innerHTML = '<div class="status error">❌ Please fill all fields</div>';
+                return;
+            }
+
+            if (password.length < 8 || !/\d/.test(password)) {
+                status.innerHTML = '<div class="status error">❌ Password must be at least 8 characters and contain a number</div>';
+                return;
+            }
+
+            status.innerHTML = '<div class="status info">🔄 Registering...</div>';
+
+            try {
+                await API.register({ username, email, password });
+                status.innerHTML = '<div class="status success">✅ Registration successful! You can now login.</div>';
+                
+                // Auto-fill login form
+                document.getElementById('loginEmail').value = email;
+                document.getElementById('loginPassword').value = password;
+            } catch (error) {
+                status.innerHTML = `<div class="status error">❌ Registration failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin() {
+            const status = document.getElementById('login-status');
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                status.innerHTML = '<div class="status error">❌ Please fill all fields</div>';
+                return;
+            }
+
+            status.innerHTML = '<div class="status info">🔄 Logging in...</div>';
+
+            try {
+                await API.login({ email, password });
+                status.innerHTML = '<div class="status success">✅ Login successful! Token stored.</div>';
+                checkAuthStatus();
+            } catch (error) {
+                status.innerHTML = `<div class="status error">❌ Login failed: ${error.message}</div>`;
+            }
+        }
+
+        function checkAuthStatus() {
+            const status = document.getElementById('auth-status');
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+
+            if (token && user) {
+                const userData = JSON.parse(user);
+                status.innerHTML = `
+                    <div class="status success">
+                        ✅ Authenticated as: ${userData.username}<br>
+                        📧 Email: ${userData.email}<br>
+                        🔑 Token: ${token.substring(0, 20)}...
+                    </div>
+                `;
+            } else {
+                status.innerHTML = '<div class="status warning">⚠️ Not authenticated</div>';
+            }
+        }
+
+        function clearAuth() {
+            API.clearAuthData();
+            document.getElementById('auth-status').innerHTML = '<div class="status info">🗑️ Authentication cleared</div>';
+        }
+
+        async function testBackend() {
+            const status = document.getElementById('backend-status');
+            status.innerHTML = '<div class="status info">🔄 Testing backend...</div>';
+
+            try {
+                const response = await fetch('http://localhost:5000');
+                const data = await response.json();
+                status.innerHTML = `<div class="status success">✅ Backend connected: ${data.message}</div>`;
+            } catch (error) {
+                status.innerHTML = `<div class="status error">❌ Backend connection failed: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-check status on page load
+        window.onload = function() {
+            testBackend();
+            checkAuthStatus();
+        };
+    </script>
+</body>
+</html> 

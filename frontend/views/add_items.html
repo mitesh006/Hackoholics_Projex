@@ -66,6 +66,53 @@
       margin-top: 10px;
     }
 
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .form-actions .btn {
+      flex: 1;
+    }
+
+    .image-preview-item {
+      position: relative;
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .image-preview-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .remove-image {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .field-error {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    input.error, select.error, textarea.error {
+      border-color: #dc3545;
+    }
+
     .product-details {
       flex: 1;
     }
@@ -327,16 +374,17 @@
 </head>
 <body>
 
+
   <!-- Example navigation bar for all pages -->
   <div class="header">
     <div class="nav-container">
-      <a href="dashboard.html" class="logo">ReWear</a>
+      <a href="LandingPage.html" class="logo">ReWear</a>
       <div class="nav-links">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="add_items.html">Add Items</a>
-        <a href="browse.html">Browse</a>
-        <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
         <a href="LandingPage.html">Home</a>
+        <a href="browse.html">Browse</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
       </div>
       <div class="user-info">
         <div class="points-badge"><span id="point-balance">500</span> Points</div>
@@ -345,29 +393,29 @@
     </div>
   </div>
 
-  <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+  <a href="LandingPage.html" class="back-btn">← Back to Home</a>
 
   <div class="container">
     <h1>Add New Item</h1>
 
-    <form id="add_itemsForm">
+    <form id="item-form">
       <div class="form-section">
-        <div class="image-upload" onclick="document.getElementById('imageInput').click()">
-          <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+        <div class="image-upload" onclick="document.getElementById('itemImages').click()">
+          <input type="file" id="itemImages" name="images" accept="image/*" multiple>
           <div class="image-upload-text">📷 Add Images</div>
           <div>Click to upload photos</div>
-          <img id="imagePreview" class="image-preview" style="display: none;">
+          <div id="image-preview" class="image-preview"></div>
         </div>
 
         <div class="product-details">
           <div class="form-group">
-            <label for="itemName">Item Name</label>
-            <input type="text" id="itemName" placeholder="Enter item name" required>
+            <label for="itemTitle">Item Title *</label>
+            <input type="text" id="itemTitle" name="title" placeholder="Enter item title" required>
           </div>
 
           <div class="form-group">
-            <label for="category">Category</label>
-            <select id="category" required>
+            <label for="itemCategory">Category *</label>
+            <select id="itemCategory" name="category" required>
               <option value="">Select Category</option>
               <option value="tops">Tops</option>
               <option value="bottoms">Bottoms</option>
@@ -380,8 +428,12 @@
 
           <div class="price-condition">
             <div class="form-group">
-              <label for="size">Size</label>
-              <select id="size" required>
+              <label for="itemPrice">Price ($) *</label>
+              <input type="number" id="itemPrice" name="price" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+              <label for="itemSize">Size *</label>
+              <select id="itemSize" name="size" required>
                 <option value="">Select Size</option>
                 <option value="XS">XS</option>
                 <option value="S">S</option>
@@ -392,8 +444,8 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="condition">Condition</label>
-              <select id="condition" required>
+              <label for="itemCondition">Condition *</label>
+              <select id="itemCondition" name="condition" required>
                 <option value="">Select Condition</option>
                 <option value="new">New</option>
                 <option value="like-new">Like New</option>
@@ -406,11 +458,14 @@
       </div>
 
       <div class="form-group">
-        <label for="description">Product Description</label>
-        <textarea id="description" placeholder="Describe your item - brand, material, style, any flaws, etc." required></textarea>
+        <label for="itemDescription">Description *</label>
+        <textarea id="itemDescription" name="description" placeholder="Describe your item - brand, material, style, any flaws, etc." required></textarea>
       </div>
 
-      <button type="submit" class="btn btn-primary">📤 List Item for Swap</button>
+      <div class="form-actions">
+        <button type="submit" id="submit-btn" class="btn btn-primary">Add Item</button>
+        <button type="button" onclick="formHandler.cancelForm()" class="btn btn-secondary">Cancel</button>
+      </div>
     </form>
 
     <div class="previous-listings">
@@ -441,81 +496,45 @@
     </div>
   </div>
 
+  <script src="../public/api.js"></script>
+  <script src="../public/database-loader.js"></script>
+  <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
+  <script src="../public/page-loader.js"></script>
   <script>
-    let userItems = [];
-
-    function previewImage(event) {
-      const file = event.target.files[0];
-      const preview = document.getElementById('imagePreview');
-      const uploadText = document.querySelector('.image-upload-text');
-      
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-          uploadText.textContent = 'Change Image';
-        };
-        reader.readAsDataURL(file);
-      }
+    // Check authentication
+    if (!API.isAuthenticated()) {
+      window.location.href = 'index.html';
     }
 
-    function add_itemsToGrid(item) {
-      const listingsGrid = document.getElementById('listingsGrid');
-      const itemElement = document.createElement('div');
-      itemElement.className = 'listing-item';
-      
-      itemElement.innerHTML = `
-        <div class="listing-image">${item.image ? `<img src="${item.image}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">` : 'No Image'}</div>
-        <div class="listing-title">${item.name}</div>
-        <div class="listing-status">Available</div>
-      `;
-      
-      listingsGrid.appendChild(itemElement);
-    }
-
-    document.getElementById('add_itemsForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const itemName = document.getElementById('itemName').value;
-      const category = document.getElementById('category').value;
-      const size = document.getElementById('size').value;
-      const condition = document.getElementById('condition').value;
-      const description = document.getElementById('description').value;
-      const imagePreview = document.getElementById('imagePreview');
-      
-      if (!itemName || !category || !size || !condition || !description) {
-        alert('Please fill in all fields');
-        return;
+    // Load user items on page load
+    window.addEventListener('load', async function() {
+      try {
+        const items = await API.getUserItems();
+        const listingsGrid = document.getElementById('listingsGrid');
+        listingsGrid.innerHTML = '';
+        
+        if (items.length === 0) {
+          listingsGrid.innerHTML = '<p>No items listed yet. Add your first item above!</p>';
+        } else {
+          items.forEach(item => {
+            listingsGrid.innerHTML += `
+              <div class="listing-item">
+                <div class="listing-image">
+                  ${item.images && item.images.length > 0 
+                    ? `<img src="${item.images[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">` 
+                    : 'No Image'}
+                </div>
+                <div class="listing-title">${item.title}</div>
+                <div class="listing-status">${item.status || 'Available'}</div>
+              </div>
+            `;
+          });
+        }
+      } catch (error) {
+        UI.showMessage('Failed to load your items: ' + error.message, 'danger');
       }
-      
-      const newItem = {
-        name: itemName,
-        category: category,
-        size: size,
-        condition: condition,
-        description: description,
-        image: imagePreview.style.display === 'block' ? imagePreview.src : null,
-        dateAdded: new Date().toLocaleDateString()
-      };
-      
-      userItems.push(newItem);
-      add_itemsToGrid(newItem);
-      
-      // Reset form
-      document.getElementById('add_itemsForm').reset();
-      document.getElementById('imagePreview').style.display = 'none';
-      document.querySelector('.image-upload-text').textContent = '📷 Add Images';
-      
-      alert('Item added successfully! 🎉');
-    });
-
-    // Load any existing items from memory on page load
-    window.addEventListener('load', function() {
-      // This would normally load from a database or local storage
-      // For now, we'll just show the placeholder items
     });
   </script>
-
+  
 </body>
 </html>

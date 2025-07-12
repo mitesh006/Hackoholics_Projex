@@ -291,8 +291,9 @@
       <div class="nav-links">
         <a href="LandingPage.html">Home</a>
         <a href="browse.html">Browse</a>
-        <a href="index.html">Login</a>
-        <a href="index.html">Sign Up</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
       </div>
       <div class="user-info">
         <div class="points-badge" onclick="showPointsInfo()">
@@ -388,25 +389,62 @@
 
   <div class="logout" onclick="logout()">Logout</div>
 
+  <script src="../public/api.js"></script>
   <script>
-    // Sample user data - in real app, this would come from your backend
-    const userData = {
-      name: 'John Doe',
-      avatar: 'JD',
-      itemsListed: 5,
-      swapsCompleted: 3,
+    let userData = {
+      name: 'Guest',
+      avatar: 'G',
+      itemsListed: 0,
+      swapsCompleted: 0,
       points: 500,
-      rating: 4.8,
-      reviews: 23
+      rating: 0,
+      reviews: 0
     };
 
+    // Check if user is logged in
+    if (!API.isAuthenticated()) {
+      // Redirect to login if not authenticated
+      window.location.href = 'index.html';
+    }
+
     // Initialize user profile
-    function initUserProfile() {
-      document.getElementById('userName').textContent = userData.name;
-      document.getElementById('userAvatar').textContent = userData.avatar;
-      document.getElementById('userStats').textContent = 
-        `${userData.itemsListed} items • ${userData.swapsCompleted} swaps`;
-      document.getElementById('point-balance').textContent = userData.points;
+    async function initUserProfile() {
+      try {
+        const user = API.getCurrentUser();
+        
+        userData = {
+          name: user.username,
+          avatar: user.username.substring(0, 2).toUpperCase(),
+          itemsListed: 0,
+          swapsCompleted: 0,
+          points: 500,
+          rating: 0,
+          reviews: 0
+        };
+
+        // Load user's items count
+        const userItems = await API.getUserItems();
+        userData.itemsListed = userItems.length;
+
+        // Update UI
+        document.getElementById('userName').textContent = userData.name;
+        document.getElementById('userAvatar').textContent = userData.avatar;
+        document.getElementById('userStats').textContent = 
+          `${userData.itemsListed} items • ${userData.swapsCompleted} swaps`;
+        document.getElementById('point-balance').textContent = userData.points;
+
+        // Load total items count for browse card
+        try {
+          const allItems = await API.getAllItems();
+          const totalItems = allItems.total || 0;
+          document.querySelector('.dashboard-card:nth-child(2) .stat-number').textContent = totalItems;
+        } catch (error) {
+          console.error('Failed to load total items count:', error);
+        }
+        
+      } catch (error) {
+        UI.showMessage('Failed to load user profile: ' + error.message, 'danger');
+      }
     }
 
     // Navigation functions
@@ -416,41 +454,38 @@
           // Already on dashboard
           break;
         case 'add-items':
+        case 'list-items':
           window.location.href = "add_items.html";
           break;
         case 'browse':
           window.location.href = "browse.html";
           break;
         case 'swap':
-          alert('Swap feature coming soon! 🔄');
-          break;
         case 'start-swap':
-          alert('Start swapping flow coming soon! 🔄\nFeatures:\n• Find perfect matches\n• Negotiate exchanges\n• Secure transactions');
-          break;
-        case 'list-items':
-          alert('List items feature coming soon! 📤\nFeatures:\n• Photo upload\n• Condition assessment\n• Pricing suggestions');
+          UI.showMessage('Swap feature coming soon! 🔄', 'info');
           break;
         case 'profile':
-          alert('Profile management coming soon! 👤\nFeatures:\n• Edit personal info\n• Manage preferences\n• View transaction history');
+          window.location.href = "dashboard.html";
           break;
         default:
-          alert('Feature coming soon!');
+          UI.showMessage('Feature coming soon!', 'info');
       }
     }
 
     // Show points information
     function showPointsInfo() {
-      alert(`💰 Your Points: ${userData.points}\n\nHow to earn more points:\n• List items: +10 points\n• Complete swaps: +25 points\n• Referrals: +50 points\n• Reviews: +5 points\n\nPoints can be used for:\n• Premium listings\n• Swap priority\n• Exclusive items`);
+      UI.showMessage(`💰 Your Points: ${userData.points}\n\nHow to earn more points:\n• List items: +10 points\n• Complete swaps: +25 points\n• Referrals: +50 points\n• Reviews: +5 points\n\nPoints can be used for:\n• Premium listings\n• Swap priority\n• Exclusive items`, 'info');
     }
 
     // Toggle user menu
     function toggleUserMenu() {
-      alert(`👤 ${userData.name}\n\nAccount Overview:\n• Points: ${userData.points}\n• Rating: ${userData.rating}/5 (${userData.reviews} reviews)\n• Items Listed: ${userData.itemsListed}\n• Swaps Completed: ${userData.swapsCompleted}\n\nMenu options coming soon:\n• View Profile\n• Edit Profile\n• My Items\n• Swap History\n• Settings`);
+      UI.showMessage(`👤 ${userData.name}\n\nAccount Overview:\n• Points: ${userData.points}\n• Rating: ${userData.rating}/5 (${userData.reviews} reviews)\n• Items Listed: ${userData.itemsListed}\n• Swaps Completed: ${userData.swapsCompleted}\n\nMenu options:\n• View Profile\n• Edit Profile\n• My Items\n• Swap History\n• Settings`, 'info');
     }
 
     function logout() {
       if (confirm('Are you sure you want to logout?')) {
-        window.location.href = "index2.html"; // your login/signup page
+        API.logout();
+        window.location.href = 'index.html';
       }
     }
 
@@ -459,6 +494,10 @@
       initUserProfile();
     };
   </script>
+  <script src="../public/api.js"></script>
+  <script src="../public/database-loader.js"></script>
+  <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
+  <script src="../public/page-loader.js"></script>
 
 </body>
 </html>

@@ -96,7 +96,7 @@
 
     <!-- Login Form -->
     <div id="loginForm" class="hidden">
-      <input type="text" id="loginUsername" placeholder="Enter username">
+      <input type="email" id="loginEmail" placeholder="Enter email">
       <input type="password" id="loginPassword" placeholder="Enter password">
       <button class="btn" onclick="logIn()">Login</button>
       <p class="link" onclick="showSignUp()">Don't have an account? Sign Up</p>
@@ -117,7 +117,18 @@
     <a href="LandingPage.html" style="color:#388e3c;text-decoration:underline;">Back to Home</a>
   </p>
 
+  <script src="../public/api.js"></script>
   <script>
+    // Check if user is already logged in
+    if (API.isAuthenticated()) {
+      const user = API.getCurrentUser();
+      document.getElementById('userDisplay').textContent = user.username;
+      document.getElementById('emailDisplay').textContent = user.email;
+      document.getElementById('welcomeBox').classList.remove('hidden');
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+    }
+
     function showLogin() {
       document.getElementById('signupForm').classList.add('hidden');
       document.getElementById('loginForm').classList.remove('hidden');
@@ -128,63 +139,84 @@
       document.getElementById('signupForm').classList.remove('hidden');
     }
 
-    function signUp() {
-      const user = document.getElementById('signupUsername').value;
-      const pass = document.getElementById('signupPassword').value;
+    async function signUp() {
+      const username = document.getElementById('signupUsername').value;
+      const password = document.getElementById('signupPassword').value;
       const email = document.getElementById('signupEmail').value;
       const phone = document.getElementById('signupPhone').value;
 
-      if (user === "" || pass === "" || email === "" || phone === "") {
-        alert("Please fill all fields.");
+      if (username === "" || password === "" || email === "" || phone === "") {
+        UI.showMessage("Please fill all fields.", "warning");
         return;
       }
 
       // Password validation: min 8 chars, contains number
-      if (pass.length < 8 || !/\d/.test(pass)) {
-        alert("Password must be at least 8 characters and contain a number.");
+      if (password.length < 8 || !/\d/.test(password)) {
+        UI.showMessage("Password must be at least 8 characters and contain a number.", "warning");
         return;
       }
 
       // Phone validation: at least 10 digits and only numbers
       if (phone.length < 10 || !/^\d+$/.test(phone)) {
-        alert("Phone number must be at least 10 digits and digits only.");
+        UI.showMessage("Phone number must be at least 10 digits and digits only.", "warning");
         return;
       }
 
-      // Store in localStorage
-      localStorage.setItem("user_" + user + "_password", pass);
-      localStorage.setItem("user_" + user + "_email", email);
-      localStorage.setItem("user_" + user + "_phone", phone);
+      try {
+        const signupBtn = document.querySelector('#signupForm .btn');
+        const originalText = signupBtn.innerHTML;
+        UI.showLoading(signupBtn);
 
-      alert("Sign up successful! Please log in.");
-      showLogin();
+        await API.register({
+          username,
+          email,
+          password
+        });
+
+        UI.showMessage("Registration successful! Please log in.", "success");
+        showLogin();
+      } catch (error) {
+        UI.showMessage(error.message, "danger");
+      } finally {
+        UI.hideLoading(signupBtn, originalText);
+      }
     }
 
-    function logIn() {
-      const user = document.getElementById('loginUsername').value;
-      const pass = document.getElementById('loginPassword').value;
+    async function logIn() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
 
-      const storedPass = localStorage.getItem("user_" + user + "_password");
-
-      if (storedPass === null) {
-        alert("User not found.");
+      if (email === "" || password === "") {
+        UI.showMessage("Please fill all fields.", "warning");
         return;
       }
 
-      if (storedPass === pass) {
-        window.location.href = "dashboard.html"; // Redirect to user dashboard
-      } else {
-        alert("Incorrect password.");
+      try {
+        const loginBtn = document.querySelector('#loginForm .btn');
+        const originalText = loginBtn.innerHTML;
+        UI.showLoading(loginBtn);
+
+        await API.login({
+          email,
+          password
+        });
+
+        UI.showMessage("Login successful!", "success");
+        window.location.href = "LandingPage.html";
+      } catch (error) {
+        UI.showMessage(error.message, "danger");
+      } finally {
+        UI.hideLoading(loginBtn, originalText);
       }
     }
 
     function logOut() {
-      document.getElementById('welcomeBox').classList.add('hidden');
-      document.getElementById('loginForm').classList.remove('hidden');
-      document.getElementById('loginUsername').value = "";
-      document.getElementById('loginPassword').value = "";
+      API.logout();
     }
   </script>
-
+  <script src="../public/api.js"></script>
+  <script src="../public/database-loader.js"></script>
+  <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
+  <script src="../public/page-loader.js"></script>
 </body>
 </html>

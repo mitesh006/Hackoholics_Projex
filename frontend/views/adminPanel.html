@@ -304,12 +304,13 @@
   <!-- Header Section -->
   <div class="header">
     <div class="nav-container">
-      <a href="dashboard.html" class="logo">ReWear</a>
+      <a href="LandingPage.html" class="logo">ReWear</a>
       <div class="nav-links">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="add_items.html">Add Items</a>
+        <a href="LandingPage.html">Home</a>
         <a href="browse.html">Browse</a>
-        <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
       </div>
       <div class="user-info">
         <div class="points-badge"><span id="point-balance">500</span> Points</div>
@@ -412,7 +413,19 @@
     </div>
   </div>
 
+  <script src="../public/api.js"></script>
   <script>
+    // Check if user is admin
+    if (!API.isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    const currentUser = API.getCurrentUser();
+    if (currentUser.role !== 'admin') {
+      UI.showMessage('Access denied. Admin privileges required.', 'danger');
+      window.location.href = 'dashboard.html';
+    }
+
     // Switch between different management tabs
     function switchTab(tab) {
       // Update button states
@@ -429,6 +442,7 @@
         case 'users':
           sectionTitle.textContent = 'Manage Users';
           usersSection.style.display = 'block';
+          loadUsers();
           break;
         case 'orders':
           sectionTitle.textContent = 'Manage Orders';
@@ -436,35 +450,104 @@
           break;
         case 'listings':
           sectionTitle.textContent = 'Manage Listings';
-          usersSection.innerHTML = '<div class="section-title">Manage Listings</div><div style="text-align: center; padding: 50px; color: #888;">Listings management interface coming soon...</div>';
+          loadListings();
           break;
       }
     }
 
-    // Perform actions on users
-    function performAction(action, userName) {
+    async function loadUsers() {
+      try {
+        // In a real app, you would have an admin endpoint to get all users
+        UI.showMessage('Loading users...', 'info');
+        // For now, we'll show a placeholder
+        const usersSection = document.getElementById('usersSection');
+        usersSection.innerHTML = `
+          <div class="section-title">Manage Users</div>
+          <div style="text-align: center; padding: 50px; color: #888;">
+            User management interface coming soon...<br>
+            This would show all registered users with admin controls.
+          </div>
+        `;
+      } catch (error) {
+        UI.showMessage('Failed to load users: ' + error.message, 'danger');
+      }
+    }
+
+    async function loadListings() {
+      try {
+        const response = await API.getAllItems();
+        const items = response.items || [];
+        
+        const usersSection = document.getElementById('usersSection');
+        usersSection.innerHTML = `
+          <div class="section-title">Manage Listings (${items.length} total)</div>
+          <div style="padding: 20px;">
+            ${items.map(item => `
+              <div class="user-card">
+                <div class="user-info">
+                  <div class="user-avatar-large">${item.title.substring(0, 2).toUpperCase()}</div>
+                  <div class="user-details-section">
+                    <div class="user-name">${item.title}</div>
+                    <div class="user-tag">${item.category}</div>
+                    <div class="user-stats">${item.condition} • ${item.size} • ${UI.formatPrice(item.price)}</div>
+                  </div>
+                </div>
+                <div class="details-section">
+                  <div>${item.description.substring(0, 100)}...</div>
+                </div>
+                <div class="actions-section">
+                  <button class="action-btn" onclick="performAction('view', '${item._id}')">View</button>
+                  <button class="action-btn" onclick="performAction('edit', '${item._id}')">Edit</button>
+                  <button class="action-btn" onclick="performAction('delete', '${item._id}')">Delete</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        UI.showMessage('Failed to load listings: ' + error.message, 'danger');
+      }
+    }
+
+    // Perform actions on users/items
+    async function performAction(action, id) {
       switch(action) {
         case 'view':
-          alert(`📊 Viewing ${userName}'s Profile\n\n• Account Status: Active\n• Join Date: Jan 2024\n• Total Transactions: 15\n• Points Balance: 350\n• Verification: Email ✓, Phone ✓\n• Recent Activity: Listed 2 items today`);
+          UI.showMessage(`📊 Viewing item ${id}`, 'info');
           break;
         case 'edit':
-          alert(`✏️ Edit ${userName}'s Account\n\nAvailable Actions:\n• Suspend Account\n• Verify Account\n• Reset Password\n• Update Profile\n• Manage Points\n• View Transaction History\n• Send Notification`);
+          UI.showMessage(`✏️ Edit item ${id}`, 'info');
+          break;
+        case 'delete':
+          if (confirm('Are you sure you want to delete this item?')) {
+            try {
+              await API.deleteItem(id);
+              UI.showMessage('Item deleted successfully', 'success');
+              loadListings();
+            } catch (error) {
+              UI.showMessage('Failed to delete item: ' + error.message, 'danger');
+            }
+          }
           break;
         default:
-          alert(`Action performed on ${userName}`);
+          UI.showMessage(`Action performed on ${id}`, 'info');
       }
     }
 
     // Toggle admin user menu
     function toggleUserMenu() {
-      alert(`👤 Admin Panel\n\nAdmin: System Administrator\nRole: Full Access\nLast Login: Today 09:30 AM\n\nQuick Actions:\n• View System Stats\n• Export Reports\n• Backup Database\n• User Analytics\n• Platform Settings\n• Logout`);
+      UI.showMessage(`👤 Admin Panel\n\nAdmin: ${currentUser.username}\nRole: ${currentUser.role}\n\nQuick Actions:\n• View System Stats\n• Export Reports\n• Backup Database\n• User Analytics\n• Platform Settings\n• Logout`, 'info');
     }
 
     // Initialize page
     window.onload = function() {
       console.log('ReWear Admin Panel loaded successfully');
+      loadUsers();
     };
   </script>
-
+  <script src="../public/api.js"></script>
+  <script src="../public/database-loader.js"></script>
+  <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
+  <script src="../public/page-loader.js"></script>
 </body>
 </html>

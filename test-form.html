@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Test - ReWear</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Form Submission Test</h1>
+        
+        <div class="test-section">
+            <h3>📋 Test Steps</h3>
+            <ol>
+                <li><strong>Check Authentication:</strong> Make sure you're logged in</li>
+                <li><strong>Open Add Items Page:</strong> Navigate to the form</li>
+                <li><strong>Fill the Form:</strong> Enter all required fields</li>
+                <li><strong>Upload Images:</strong> Select at least one image</li>
+                <li><strong>Submit Form:</strong> Click "Add Item" button</li>
+                <li><strong>Check Results:</strong> Verify item appears in dashboard</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 Quick Links</h3>
+            <a href="frontend/views/add_items.html" class="btn btn-success">Open Add Items Form</a>
+            <a href="frontend/views/dashboard.html" class="btn">Check Dashboard</a>
+            <a href="frontend/views/browse.html" class="btn">Browse All Items</a>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Form Field Requirements</h3>
+            <ul>
+                <li><strong>Item Title:</strong> Required (any text)</li>
+                <li><strong>Description:</strong> Required (minimum 10 characters)</li>
+                <li><strong>Price:</strong> Required (number greater than 0)</li>
+                <li><strong>Category:</strong> Required (select from dropdown)</li>
+                <li><strong>Size:</strong> Required (select from dropdown)</li>
+                <li><strong>Condition:</strong> Required (select from dropdown)</li>
+                <li><strong>Images:</strong> Optional but recommended</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🐛 Common Issues & Solutions</h3>
+            
+            <div class="status info">
+                <strong>Issue:</strong> "Form not submitting"<br>
+                <strong>Solution:</strong> Check browser console for JavaScript errors
+            </div>
+            
+            <div class="status info">
+                <strong>Issue:</strong> "Validation errors"<br>
+                <strong>Solution:</strong> Make sure all required fields are filled
+            </div>
+            
+            <div class="status info">
+                <strong>Issue:</strong> "Images not uploading"<br>
+                <strong>Solution:</strong> Check file size and format (JPG, PNG, etc.)
+            </div>
+            
+            <div class="status info">
+                <strong>Issue:</strong> "Backend connection failed"<br>
+                <strong>Solution:</strong> Make sure backend server is running on port 5000
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>✅ Success Indicators</h3>
+            <ul>
+                <li>✅ Form submits without errors</li>
+                <li>✅ Success message appears</li>
+                <li>✅ Form resets after submission</li>
+                <li>✅ Item appears in dashboard</li>
+                <li>✅ Item appears in browse page</li>
+                <li>✅ Images are displayed correctly</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Backend Connection Test</h3>
+            <button class="btn" onclick="testBackend()">Test Backend</button>
+            <button class="btn" onclick="testAuth()">Test Authentication</button>
+            <div id="test-results"></div>
+        </div>
+    </div>
+
+    <script src="frontend/public/api.js"></script>
+    <script>
+        async function testBackend() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<div class="status info">Testing backend connection...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000');
+                const data = await response.json();
+                
+                if (data.message) {
+                    results.innerHTML = `<div class="status success">✅ Backend Connected: ${data.message}</div>`;
+                } else {
+                    results.innerHTML = '<div class="status error">❌ Backend response unexpected</div>';
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Backend Connection Failed: ${error.message}</div>`;
+            }
+        }
+
+        function testAuth() {
+            const results = document.getElementById('test-results');
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                const userData = JSON.parse(user);
+                results.innerHTML = `<div class="status success">✅ Authenticated as: ${userData.username}</div>`;
+            } else {
+                results.innerHTML = '<div class="status warning">⚠️ Not authenticated - please login first</div>';
+            }
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            testBackend();
+            testAuth();
+        };
+    </script>
+</body>
+</html> 

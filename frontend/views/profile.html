@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ReWear - Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../public/styles.css">
+</head>
+<body>
+  <div class="header">
+    <div class="nav-container">
+      <a href="dashboard.html" class="logo">ReWear</a>
+      <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="browse.html">Browse</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="profile.html">Profile</a>
+        <a href="LandingPage.html">Home</a>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <h1>Your Profile</h1>
+    <div id="profileDetails"></div>
+    <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+  </div>
+  <script>
+    // Fetch user profile from backend
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('profileDetails').innerHTML = `
+          <p><strong>Username:</strong> ${data.username}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Phone:</strong> ${data.phone}</p>
+          <p><strong>Points:</strong> ${data.points}</p>
+        `;
+      });
+  </script>
+</body>
+</html>

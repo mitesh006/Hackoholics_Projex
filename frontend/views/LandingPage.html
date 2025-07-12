@@ -8,12 +8,130 @@
       margin: 0;
       font-family: 'Arial', sans-serif;
       background: linear-gradient(to right, #fffde7, #e8f5e9);
+      min-height: 100vh;
+    }
+
+    /* Header Section */
+    .header {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #2e7d32;
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: #388e3c;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #2e7d32;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .points-badge {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .points-badge:hover {
+      transform: scale(1.05);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 15px;
+      border-radius: 25px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .user-profile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #388e3c, #2e7d32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .user-name {
+      font-weight: bold;
+      color: #2e7d32;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .user-stats {
+      font-size: 11px;
+      color: #666;
+      margin: 0;
+    }
+
+    /* Main Content */
+    .main-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      min-height: calc(100vh - 100px);
       text-align: center;
+      padding: 40px 20px;
     }
 
     h1 {
@@ -41,11 +159,12 @@
       text-decoration: none;
       width: 80%;
       max-width: 300px;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .btn:hover {
       background-color: #2e7d32;
+      transform: translateY(-2px);
     }
 
     .logout {
@@ -54,24 +173,291 @@
       color: #999;
       cursor: pointer;
       text-decoration: underline;
+      transition: color 0.3s ease;
+    }
+
+    .logout:hover {
+      color: #666;
+    }
+
+    /* Dashboard Cards */
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 40px auto 0;
+      padding: 0 20px;
+    }
+
+    .dashboard-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .card-title {
+      font-size: 22px;
+      color: #2e7d32;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .card-description {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .card-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .user-info {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .dashboard-cards {
+        grid-template-columns: 1fr;
+        margin-top: 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .subheading {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Welcome to ReWear</h1>
-  <div class="subheading">Choose an action to get started</div>
+  <!-- Header Section -->
+  <div class="header">
+    <div class="nav-container">
+      <a href="#" class="logo">ReWear</a>
+      <div class="nav-links">
+        <a href="#" onclick="navigateTo('dashboard')">Dashboard</a>
+        <a href="#" onclick="navigateTo('add-items')">Add Items</a>
+        <a href="#" onclick="navigateTo('browse')">Browse</a>
+        <a href="#" onclick="navigateTo('swap')">Swap</a>
+      </div>
+      <div class="user-info">
+        <div class="points-badge" onclick="showPointsInfo()">
+          <span id="point-balance">500</span> Points
+        </div>
+        <div class="user-profile" onclick="toggleUserMenu()">
+          <div class="user-avatar" id="userAvatar">JD</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">John Doe</div>
+            <div class="user-stats" id="userStats">5 items • 3 swaps</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <a href="#" class="btn" onclick="alert('Start swapping flow coming soon!')">🔄 Start Swapping</a>
-  <a href="#" class="btn" onclick="alert('Browsing items coming soon!')">🛍️ Browse Items</a>
-  <a href="#" class="btn" onclick="alert('Listing items coming soon!')">📤 List Items</a>
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1>Welcome to ReWear</h1>
+    <div class="subheading">Your sustainable fashion marketplace</div>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <div class="dashboard-cards">
+    <div class="dashboard-card" onclick="navigateTo('start-swap')">
+      <span class="card-icon">🔄</span>
+      <div class="card-title">Start Swapping</div>
+      <div class="card-description">Exchange your clothes with others and discover new styles</div>
+      <div class="card-stats">
+        <div class="stat-item">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Available</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      </div>
+      <button class="btn">Explore Swaps</button>
+    </div>
+
+    <div class="dashboard-card" onclick="navigateTo('browse')">
+      <span class="card-icon">🛍️</span>
+      <div class="card-title">Browse Items</div>
+      <div class="card-description">Discover amazing pre-loved fashion from our community</div>
+      <div class="card-stats">
+        <div class="stat-item">
+          <div class="stat-number">247</div>
+          <div class="stat-label">Items</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">18</div>
+          <div class="stat-label">New Today</div>
+        </div>
+      </div>
+      <button class="btn">Start Shopping</button>
+    </div>
+
+    <div class="dashboard-card" onclick="navigateTo('list-items')">
+      <span class="card-icon">📤</span>
+      <div class="card-title">List Your Items</div>
+      <div class="card-description">Share your unused clothes and earn points or money</div>
+      <div class="card-stats">
+        <div class="stat-item">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Listed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Sold</div>
+        </div>
+      </div>
+      <button class="btn">Add Items</button>
+    </div>
+
+    <div class="dashboard-card" onclick="navigateTo('profile')">
+      <span class="card-icon">👤</span>
+      <div class="card-title">Your Profile</div>
+      <div class="card-description">Manage your account, preferences, and activity</div>
+      <div class="card-stats">
+        <div class="stat-item">
+          <div class="stat-number">4.8</div>
+          <div class="stat-label">Rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">23</div>
+          <div class="stat-label">Reviews</div>
+        </div>
+      </div>
+      <button class="btn">View Profile</button>
+    </div>
+  </div>
 
   <div class="logout" onclick="logout()">Logout</div>
 
   <script>
-    function logout() {
-      window.location.href = "index2.html"; // your login/signup page
+    // Sample user data - in real app, this would come from your backend
+    const userData = {
+      name: 'John Doe',
+      avatar: 'JD',
+      itemsListed: 5,
+      swapsCompleted: 3,
+      points: 500,
+      rating: 4.8,
+      reviews: 23
+    };
+
+    // Initialize user profile
+    function initUserProfile() {
+      document.getElementById('userName').textContent = userData.name;
+      document.getElementById('userAvatar').textContent = userData.avatar;
+      document.getElementById('userStats').textContent = 
+        `${userData.itemsListed} items • ${userData.swapsCompleted} swaps`;
+      document.getElementById('point-balance').textContent = userData.points;
     }
+
+    // Navigation functions
+    function navigateTo(section) {
+      switch(section) {
+        case 'dashboard':
+          // Already on dashboard
+          break;
+        case 'add-items':
+          window.location.href = "add_items.html";
+          break;
+        case 'browse':
+          window.location.href = "browse.html";
+          break;
+        case 'swap':
+          alert('Swap feature coming soon! 🔄');
+          break;
+        case 'start-swap':
+          alert('Start swapping flow coming soon! 🔄\nFeatures:\n• Find perfect matches\n• Negotiate exchanges\n• Secure transactions');
+          break;
+        case 'list-items':
+          alert('List items feature coming soon! 📤\nFeatures:\n• Photo upload\n• Condition assessment\n• Pricing suggestions');
+          break;
+        case 'profile':
+          alert('Profile management coming soon! 👤\nFeatures:\n• Edit personal info\n• Manage preferences\n• View transaction history');
+          break;
+        default:
+          alert('Feature coming soon!');
+      }
+    }
+
+    // Show points information
+    function showPointsInfo() {
+      alert(`💰 Your Points: ${userData.points}\n\nHow to earn more points:\n• List items: +10 points\n• Complete swaps: +25 points\n• Referrals: +50 points\n• Reviews: +5 points\n\nPoints can be used for:\n• Premium listings\n• Swap priority\n• Exclusive items`);
+    }
+
+    // Toggle user menu
+    function toggleUserMenu() {
+      alert(`👤 ${userData.name}\n\nAccount Overview:\n• Points: ${userData.points}\n• Rating: ${userData.rating}/5 (${userData.reviews} reviews)\n• Items Listed: ${userData.itemsListed}\n• Swaps Completed: ${userData.swapsCompleted}\n\nMenu options coming soon:\n• View Profile\n• Edit Profile\n• My Items\n• Swap History\n• Settings`);
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        window.location.href = "index2.html"; // your login/signup page
+      }
+    }
+
+    // Initialize when page loads
+    window.onload = function() {
+      initUserProfile();
+    };
   </script>
 
 </body>

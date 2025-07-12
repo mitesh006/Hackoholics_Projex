@@ -617,8 +617,16 @@
       <div class="nav-links">
         <a href="LandingPage.html">Home</a>
         <a href="browse.html">Browse</a>
+
+        <a href="availablepage.html">Available Items</a>
+        <a href="swap.html" style="color: #2e7d32; text-decoration: underline;">Swapping</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
+
         <a href="swapping.html" style="color: #2e7d32; text-decoration: underline;">Swapping</a>
         <a href="index.html">Login</a>
+
       </div>
       <div class="user-info">
         <div class="points-badge" id="pointsBadge" onclick="showPointsInfo()">
@@ -627,7 +635,11 @@
         <div class="user-profile" onclick="toggleUserMenu()">
           <div class="user-avatar" id="userAvatar">JD</div>
           <div class="user-details">
+
+            <div class="user-name" id="userName">Jay Patel</div>
+
             <div class="user-name" id="userName">John Doe</div>
+
             <div class="user-stats" id="userStats">5 items • 3 swaps</div>
           </div>
         </div>
@@ -703,7 +715,11 @@
   <script>
     // Sample data - in real app, this would come from backend
     let userData = {
+
+      name: 'Jay Patel',
+
       name: 'John Doe',
+
       avatar: 'JD',
       itemsListed: 5,
       swapsCompleted: 3,
@@ -1072,6 +1088,10 @@
     };
   </script>
 
+
+  <button class="btn" id="available-items-btn">Available Items</button>
+
   <button class="btn" onclick="window.location.href='availablepage.html'">Available Items</button>
+
 </body>
 </html>

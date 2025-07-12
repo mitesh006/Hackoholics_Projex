@@ -340,13 +340,15 @@
   <!-- Example navigation bar for all pages -->
   <div class="header">
     <div class="nav-container">
-      <a href="dashboard.html" class="logo">ReWear</a>
+      <a href="LandingPage.html" class="logo">ReWear</a>
       <div class="nav-links">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="add_items.html">Add Items</a>
-        <a href="browse.html">Browse</a>
-        <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
         <a href="LandingPage.html">Home</a>
+        <a href="browse.html">Browse</a>
+        <a href="availablepage.html">Available Items</a>
+        <a href="swap.html">Swapping</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
       </div>
       <div class="user-info">
         <div class="points-badge"><span id="point-balance">500</span> Points</div>
@@ -425,23 +427,19 @@
     <p>&copy; 2025 ReWear - Sustainable Fashion Exchange</p>
   </div>
 
+  <script src="../public/api.js"></script>
   <script>
-    const loggedUser = "Guest"; // This would normally come from login
-    document.getElementById("user-display").textContent = `👤 Welcome, ${loggedUser}`;
-
     const cart = [];
     let userPoints = 500;
+    let allProducts = [];
 
-    const sampleProducts = [
-      { id: 1, name: "Black Mini Dress", price: 11980, points: 120, category: "dresses", size: "M", condition: "like-new", image: null },
-      { id: 2, name: "Red Cardigan", price: 13495, points: 135, category: "tops", size: "L", condition: "good", image: null },
-      { id: 3, name: "Brown Leather Jacket", price: 12995, points: 130, category: "outerwear", size: "M", condition: "good", image: null },
-      { id: 4, name: "Black Leather Pants", price: 9895, points: 100, category: "bottoms", size: "S", condition: "like-new", image: null },
-      { id: 5, name: "Jade Blue Jeans", price: 13495, points: 135, category: "bottoms", size: "M", condition: "new", image: null },
-      { id: 6, name: "White Linen Pants", price: 12814, points: 128, category: "bottoms", size: "L", condition: "good", image: null },
-      { id: 7, name: "Vintage Denim Jacket", price: 8500, points: 85, category: "outerwear", size: "M", condition: "fair", image: null },
-      { id: 8, name: "Summer Floral Dress", price: 9200, points: 92, category: "dresses", size: "S", condition: "like-new", image: null }
-    ];
+    // Check if user is logged in
+    const currentUser = API.getCurrentUser();
+    if (currentUser) {
+      document.getElementById("user-display").textContent = `👤 Welcome, ${currentUser.username}`;
+    } else {
+      document.getElementById("user-display").textContent = `👤 Welcome, Guest`;
+    }
 
     function updatePointsDisplay() {
       document.getElementById("point-balance").textContent = userPoints;
@@ -451,26 +449,33 @@
       document.getElementById("cart-count").textContent = cart.length;
     }
 
-    function renderProducts(products = sampleProducts) {
+    function renderProducts(products = allProducts) {
       const grid = document.getElementById("products-grid");
       grid.innerHTML = "";
+
+      if (products.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #666;">No items found. Try adjusting your filters.</p>';
+        return;
+      }
 
       products.forEach(product => {
         const productCard = document.createElement("div");
         productCard.className = "product-card";
         productCard.innerHTML = `
           <div class="product-image">
-            ${product.image ? `<img src="${product.image}" alt="${product.name}">` : "📷 No Image"}
+            ${product.images && product.images.length > 0 
+              ? `<img src="${product.images[0]}" alt="${product.title}">` 
+              : "📷 No Image"}
           </div>
-          <div class="product-title">${product.name}</div>
+          <div class="product-title">${product.title}</div>
           <div class="product-details">
             Size: ${product.size} | Condition: ${product.condition}
           </div>
-          <div class="product-price">₹${product.price.toLocaleString()}</div>
-          <div class="product-points">${product.points} Points</div>
+          <div class="product-price">$${UI.formatPrice(product.price)}</div>
+          <div class="product-points">${Math.round(product.price / 10)} Points</div>
           <div class="product-actions">
-            <button class="btn btn-secondary" onclick="addToCart(${product.id})">Add to Cart</button>
-            <button class="btn btn-secondary" onclick="buyNow(${product.id})">Buy Now</button>
+            <button class="btn btn-secondary" onclick="addToCart('${product._id}')">Add to Cart</button>
+            <button class="btn btn-secondary" onclick="viewDetails('${product._id}')">View Details</button>
           </div>
         `;
         grid.appendChild(productCard);
@@ -478,21 +483,18 @@
     }
 
     function addToCart(productId) {
-      const product = sampleProducts.find(p => p.id === productId);
-      if (product && !cart.find(item => item.id === productId)) {
+      const product = allProducts.find(p => p._id === productId);
+      if (product && !cart.find(item => item._id === productId)) {
         cart.push(product);
         updateCartCount();
-        alert(`"${product.name}" added to your cart! 🛒`);
-      } else if (cart.find(item => item.id === productId)) {
-        alert("Item already in cart!");
+        UI.showMessage(`"${product.title}" added to your cart! 🛒`, "success");
+      } else if (cart.find(item => item._id === productId)) {
+        UI.showMessage("Item already in cart!", "warning");
       }
     }
 
-    function buyNow(productId) {
-      const product = sampleProducts.find(p => p.id === productId);
-      if (product) {
-        alert(`Proceeding to buy "${product.name}" for ₹${product.price.toLocaleString()}`);
-      }
+    function viewDetails(productId) {
+      window.location.href = `itemDetail.html?id=${productId}`;
     }
 
     function toggleCart() {
@@ -524,47 +526,57 @@
         cartItem.className = "cart-item";
         cartItem.innerHTML = `
           <div>
-            <strong>${item.name}</strong><br>
+            <strong>${item.title}</strong><br>
             <small>Size: ${item.size} | Condition: ${item.condition}</small>
           </div>
           <div>
-            <div>₹${item.price.toLocaleString()}</div>
-            <div style="color: #388e3c; font-size: 14px;">${item.points} pts</div>
+            <div>${UI.formatPrice(item.price)}</div>
+            <div style="color: #388e3c; font-size: 14px;">${Math.round(item.price / 10)} pts</div>
           </div>
         `;
         cartItems.appendChild(cartItem);
         totalPrice += item.price;
-        totalPoints += item.points;
+        totalPoints += Math.round(item.price / 10);
       });
 
-      cartTotal.textContent = `Total: ₹${totalPrice.toLocaleString()}`;
+      cartTotal.textContent = `Total: ${UI.formatPrice(totalPrice)}`;
       cartPoints.textContent = `Points Required: ${totalPoints} pts`;
       cartSummary.style.display = "block";
     }
 
     function buyWithCash() {
-      if (cart.length === 0) return alert("Cart is empty!");
+      if (cart.length === 0) return UI.showMessage("Cart is empty!", "warning");
       
       const total = cart.reduce((sum, item) => sum + item.price, 0);
-      alert(`Thank you! You paid ₹${total.toLocaleString()} in cash. 💰`);
+      UI.showMessage(`Thank you! You paid ${UI.formatPrice(total)} in cash. 💰`, "success");
       cart.length = 0;
       updateCartCount();
       displayCart();
     }
 
     function buyWithPoints() {
-      if (cart.length === 0) return alert("Cart is empty!");
+      if (cart.length === 0) return UI.showMessage("Cart is empty!", "warning");
       
-      const totalPts = cart.reduce((sum, item) => sum + item.points, 0);
+      const totalPts = cart.reduce((sum, item) => sum + Math.round(item.price / 10), 0);
       if (userPoints >= totalPts) {
         userPoints -= totalPts;
-        alert(`Success! You used ${totalPts} points. Remaining: ${userPoints} points ⭐`);
+        UI.showMessage(`Success! You used ${totalPts} points. Remaining: ${userPoints} points ⭐`, "success");
         cart.length = 0;
         updateCartCount();
         updatePointsDisplay();
         displayCart();
       } else {
-        alert(`Not enough points! You need ${totalPts} points but only have ${userPoints} points.`);
+        UI.showMessage(`Not enough points! You need ${totalPts} points but only have ${userPoints} points.`, "danger");
+      }
+    }
+
+    async function loadProducts(filters = {}) {
+      try {
+        const response = await API.getAllItems(filters);
+        allProducts = response.items || [];
+        renderProducts(allProducts);
+      } catch (error) {
+        UI.showMessage('Failed to load products: ' + error.message, 'danger');
       }
     }
 
@@ -573,13 +585,12 @@
       const sizeFilter = document.getElementById("sizeFilter").value;
       const conditionFilter = document.getElementById("conditionFilter").value;
 
-      const filteredProducts = sampleProducts.filter(product => {
-        return (!categoryFilter || product.category === categoryFilter) &&
-               (!sizeFilter || product.size === sizeFilter) &&
-               (!conditionFilter || product.condition === conditionFilter);
-      });
+      const filters = {};
+      if (categoryFilter) filters.category = categoryFilter;
+      if (sizeFilter) filters.size = sizeFilter;
+      if (conditionFilter) filters.condition = conditionFilter;
 
-      renderProducts(filteredProducts);
+      loadProducts(filters);
     }
 
     // Add event listeners for filters
@@ -590,8 +601,11 @@
     // Initialize
     updatePointsDisplay();
     updateCartCount();
-    renderProducts();
+    loadProducts();
   </script>
+  <script src="../public/database-loader.js"></script>
+  <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
+  <script src="../public/page-loader.js"></script>
 
 </body>
 </html>

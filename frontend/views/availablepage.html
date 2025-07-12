@@ -638,8 +638,16 @@
       <div class="nav-links">
         <a href="LandingPage.html">Home</a>
         <a href="browse.html">Browse</a>
+
+        <a href="availablepage.html" style="color: #2e7d32; text-decoration: underline;">Available Items</a>
+        <a href="swap.html">Swapping</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
+
         <a href="swapping.html">Swapping</a>
         <a href="available-items.html" style="color: #2e7d32; text-decoration: underline;">Available Items</a>
+
       </div>
       <div class="user-info">
         <div class="points-badge" id="pointsBadge" onclick="showPointsInfo()">
@@ -648,7 +656,11 @@
         <div class="user-profile" onclick="toggleUserMenu()">
           <div class="user-avatar" id="userAvatar">JD</div>
           <div class="user-details">
+
+            <div class="user-name" id="userName">Jay Patel</div>
+
             <div class="user-name" id="userName">John Doe</div>
+
             <div class="user-stats" id="userStats">5 items • 3 swaps</div>
           </div>
         </div>
@@ -769,7 +781,9 @@
   <script>
     // Sample data
     let userData = {
-      name: 'John Doe',
+
+      name: 'Jay Patel',
+
       avatar: 'JD',
       itemsListed: 5,
       swapsCompleted: 3,

@@ -419,13 +419,15 @@
   <!-- Header Section -->
   <div class="header">
     <div class="nav-container">
-      <a href="dashboard.html" class="logo">ReWear</a>
+      <a href="LandingPage.html" class="logo">ReWear</a>
       <div class="nav-links">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="add_items.html">Add Items</a>
-        <a href="browse.html">Browse</a>
-        <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
         <a href="LandingPage.html">Home</a>
+        <a href="browse.html">Browse</a>
+        <a href="availablepage.html">Available Items</a>
+        <a href="swap.html">Swapping</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Logout</a>
       </div>
       <div class="user-info">
         <div class="points-badge"><span id="point-balance">500</span> Points</div>
@@ -442,7 +444,7 @@
     <div class="user-info-card">
       <div class="user-avatar-large" id="userAvatarLarge">JD</div>
       <div class="user-info-details">
-        <h2 class="user-name-large" id="userNameLarge">John Doe</h2>
+        <h2 class="user-name-large" id="userNameLarge">Jay Patel</h2>
         <div class="user-rating">
           <div class="stars">★★★★★</div>
           <div class="rating-text">4.8 (23 reviews)</div>
@@ -562,27 +564,89 @@
     <div class="logout" onclick="logout()">Logout</div>
   </div>
 
+  <script src="../public/api.js"></script>
   <script>
-    // Sample user data
-    const userData = {
-      name: 'John Doe',
-      avatar: 'JD',
-      itemsListed: 5,
-      swapsCompleted: 3,
+    let userData = {
+      name: 'Guest',
+      avatar: 'G',
+      itemsListed: 0,
+      swapsCompleted: 0,
       points: 500,
-      rating: 4.8,
-      reviews: 23
+      rating: 0,
+      reviews: 0
     };
 
+    // Check authentication
+    if (!API.isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
     // Initialize user profile
-    function initUserProfile() {
-      document.getElementById('userName').textContent = userData.name;
-      document.getElementById('userNameLarge').textContent = userData.name;
-      document.getElementById('userAvatar').textContent = userData.avatar;
-      document.getElementById('userAvatarLarge').textContent = userData.avatar;
-      document.getElementById('userStats').textContent = 
-        `${userData.itemsListed} items • ${userData.swapsCompleted} swaps`;
-      document.getElementById('point-balance').textContent = userData.points;
+    async function initUserProfile() {
+      try {
+        const user = API.getCurrentUser();
+        const profile = await API.getProfile();
+        
+        userData = {
+          name: user.username,
+          avatar: user.username.substring(0, 2).toUpperCase(),
+          itemsListed: 0,
+          swapsCompleted: 0,
+          points: 500,
+          rating: 0,
+          reviews: 0
+        };
+
+        // Load user's items
+        const userItems = await API.getUserItems();
+        userData.itemsListed = userItems.length;
+
+        // Update UI
+        document.getElementById('userName').textContent = userData.name;
+        document.getElementById('userNameLarge').textContent = userData.name;
+        document.getElementById('userAvatar').textContent = userData.avatar;
+        document.getElementById('userAvatarLarge').textContent = userData.avatar;
+        document.getElementById('userStats').textContent = 
+          `${userData.itemsListed} items • ${userData.swapsCompleted} swaps`;
+        document.getElementById('point-balance').textContent = userData.points;
+
+        // Load user's listings
+        await loadUserListings();
+        
+      } catch (error) {
+        UI.showMessage('Failed to load user profile: ' + error.message, 'danger');
+      }
+    }
+
+    async function loadUserListings() {
+      try {
+        const userItems = await API.getUserItems();
+        const itemsGrid = document.querySelector('.items-grid');
+        
+        if (userItems.length === 0) {
+          itemsGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #666;">No items listed yet. <a href="add_items.html" style="color: #388e3c;">Add your first item!</a></p>';
+        } else {
+          itemsGrid.innerHTML = '';
+          userItems.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            itemCard.innerHTML = `
+              <div class="item-placeholder">
+                ${item.images && item.images.length > 0 
+                  ? `<img src="${item.images[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` 
+                  : '📦'}
+              </div>
+              <div class="item-title">${item.title}</div>
+              <div class="item-description">${item.description.substring(0, 50)}...</div>
+              <div class="item-price">${UI.formatPrice(item.price)}</div>
+              <div class="item-status status-${item.status}">${item.status}</div>
+            `;
+            itemsGrid.appendChild(itemCard);
+          });
+        }
+      } catch (error) {
+        UI.showMessage('Failed to load user listings: ' + error.message, 'danger');
+      }
     }
 
     // Navigation functions
@@ -598,26 +662,27 @@
           window.location.href = "browse.html";
           break;
         case 'swap':
-          alert('Swap feature coming soon! 🔄');
+          UI.showMessage('Swap feature coming soon! 🔄', 'info');
           break;
         default:
-          alert('Feature coming soon!');
+          UI.showMessage('Feature coming soon!', 'info');
       }
     }
 
     // Show points information
     function showPointsInfo() {
-      alert(`💰 Your Points: ${userData.points}\n\nHow to earn more points:\n• List items: +10 points\n• Complete swaps: +25 points\n• Referrals: +50 points\n• Reviews: +5 points\n\nPoints can be used for:\n• Premium listings\n• Swap priority\n• Exclusive items`);
+      UI.showMessage(`💰 Your Points: ${userData.points}\n\nHow to earn more points:\n• List items: +10 points\n• Complete swaps: +25 points\n• Referrals: +50 points\n• Reviews: +5 points\n\nPoints can be used for:\n• Premium listings\n• Swap priority\n• Exclusive items`, 'info');
     }
 
     // Toggle user menu
     function toggleUserMenu() {
-      alert(`👤 ${userData.name}\n\nAccount Overview:\n• Points: ${userData.points}\n• Rating: ${userData.rating}/5 (${userData.reviews} reviews)\n• Items Listed: ${userData.itemsListed}\n• Swaps Completed: ${userData.swapsCompleted}\n\nMenu options:\n• View Profile\n• Edit Profile\n• My Items\n• Swap History\n• Settings`);
+      UI.showMessage(`👤 ${userData.name}\n\nAccount Overview:\n• Points: ${userData.points}\n• Rating: ${userData.rating}/5 (${userData.reviews} reviews)\n• Items Listed: ${userData.itemsListed}\n• Swaps Completed: ${userData.swapsCompleted}\n\nMenu options:\n• View Profile\n• Edit Profile\n• My Items\n• Swap History\n• Settings`, 'info');
     }
 
     function logout() {
       if (confirm('Are you sure you want to logout?')) {
-        window.location.href = "index2.html";
+        API.logout();
+        window.location.href = 'index.html';
       }
     }
 
@@ -626,6 +691,8 @@
       initUserProfile();
     };
   </script>
-
+  <script src="../public/database-loader.js"></script>
+  <script src="../public/form-handler.js"></script>  <!-- Only for add_items.html -->
+  <script src="../public/page-loader.js"></script>
 </body>
 </html>

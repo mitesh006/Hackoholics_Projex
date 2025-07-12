@@ -69,6 +69,25 @@
       font-weight: bold;
     }
 
+    .user-profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #2e7d32;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
     .back-btn {
       background-color: #388e3c;
       color: white;
@@ -446,20 +465,19 @@
 </head>
 <body>
 
+  <!-- Example navigation bar for all pages -->
   <div class="header">
     <div class="nav-container">
-      <a href="LandingPage.html" class="logo">ReWear</a>
+      <a href="dashboard.html" class="logo">ReWear</a>
       <div class="nav-links">
-        <a href="LandingPage.html">Dashboard</a>
+        <a href="dashboard.html">Dashboard</a>
         <a href="add_items.html">Add Items</a>
         <a href="browse.html">Browse</a>
         <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
       </div>
       <div class="user-info">
-        <div class="points-badge">
-          <span id="point-balance">500</span> Points
-        </div>
-        <span id="user-display">👤 Welcome, Guest</span>
+        <div class="points-badge"><span id="point-balance">500</span> Points</div>
+        <div class="user-profile"><div class="user-avatar">JD</div></div>
       </div>
     </div>
   </div>

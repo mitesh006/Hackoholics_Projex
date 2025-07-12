@@ -215,16 +215,142 @@
         flex-direction: column;
       }
     }
+
+    /* Navigation bar styles */
+    .header {
+      background-color: #388e3c;
+      padding: 10px 0;
+      color: white;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #e0f7fa;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .points-badge {
+      background-color: #2e7d32;
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .user-profile {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      background-color: #2e7d32;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+    }
+
+    /* Responsive styles for navigation */
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        padding: 10px 0;
+      }
+
+      .nav-links a {
+        padding: 10px 20px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .user-info {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .points-badge {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .user-profile {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <a href="LandingPage.html" class="back-btn">← Back to Dashboard</a>
+  <!-- Example navigation bar for all pages -->
+  <div class="header">
+    <div class="nav-container">
+      <a href="dashboard.html" class="logo">ReWear</a>
+      <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="add_items.html">Add Items</a>
+        <a href="browse.html">Browse</a>
+        <a href="#" onclick="alert('Swap feature coming soon!')">Swap</a>
+        <a href="LandingPage.html">Home</a>
+      </div>
+      <div class="user-info">
+        <div class="points-badge"><span id="point-balance">500</span> Points</div>
+        <div class="user-profile"><div class="user-avatar">JD</div></div>
+      </div>
+    </div>
+  </div>
+
+  <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
 
   <div class="container">
     <h1>Add New Item</h1>
 
-    <form id="addItemForm">
+    <form id="add_itemsForm">
       <div class="form-section">
         <div class="image-upload" onclick="document.getElementById('imageInput').click()">
           <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
@@ -334,7 +460,7 @@
       }
     }
 
-    function addItemToGrid(item) {
+    function add_itemsToGrid(item) {
       const listingsGrid = document.getElementById('listingsGrid');
       const itemElement = document.createElement('div');
       itemElement.className = 'listing-item';
@@ -348,7 +474,7 @@
       listingsGrid.appendChild(itemElement);
     }
 
-    document.getElementById('addItemForm').addEventListener('submit', function(e) {
+    document.getElementById('add_itemsForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
       const itemName = document.getElementById('itemName').value;
@@ -374,10 +500,10 @@
       };
       
       userItems.push(newItem);
-      addItemToGrid(newItem);
+      add_itemsToGrid(newItem);
       
       // Reset form
-      document.getElementById('addItemForm').reset();
+      document.getElementById('add_itemsForm').reset();
       document.getElementById('imagePreview').style.display = 'none';
       document.querySelector('.image-upload-text').textContent = '📷 Add Images';
       

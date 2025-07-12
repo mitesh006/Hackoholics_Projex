@@ -58,16 +58,4 @@
 
 ---
 
-## 🛠 Tech Stack
-
-| Layer        | Technology                 |
-|--------------|----------------------------|
-| Frontend     | HTML5, CSS3, JavaScript (optional for interactivity) |
-| Backend      | Node.js, Express.js        |
-| Database     | MongoDB Atlas              |
-| Authentication | Express Sessions or JWT  |
-| File Uploads | Multer                     |
-| Hosting      | Render / Railway / Vercel (suggested) |
-
----
 
